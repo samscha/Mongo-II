@@ -73,7 +73,13 @@ server.get('/top-answer/:soID', (req, res) => {
 
 server.get('/popular-jquery-questions', (req, res) => {
   Post.find({ tags: 'jquery' })
+    // .or([{ user: { reputation: { $gt: 200000 } } }])
+    // .or([{ score: { $gt: 5000 } }, { user: { reputation: { $gt: 200000 } } }])
+    .or([{ score: { $gt: 5000 } }, { 'user.reputation': { $gt: 200000 } }])
+    // .where('user.reputation')
+    // .gt(200000)
     // .where('score')
+    // .gt(5000)
     .then(posts => res.json(posts))
     .catch(err => res.status(422).json(err));
 });
