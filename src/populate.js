@@ -20,8 +20,6 @@ const populatePosts = () => {
   return Promise.all(
     readPosts().map(post => {
       return Post(post).save();
-      // .then(post => resolve(post))
-      // .catch(err => console.log(err));
     }),
   )
     .then(values => {})
