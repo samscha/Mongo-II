@@ -17,16 +17,16 @@ server.get('/accepted-answer/:soID', (req, res) => {
   Post.findOne({ soID: req.params.soID })
     .then(post => {
       if (post.acceptedAnswerID === null) {
-        res.status(422).json({ error: 'No accepted answer.' });
+        res.status(STATUS_USER_ERROR).json({ error: 'No accepted answer.' });
         return;
       }
 
       Post.findOne({ soID: post.acceptedAnswerID })
         .then(postAnswer => res.status(200).json(postAnswer))
-        .catch(err => res.status(422).json(err));
+        .catch(err => res.status(STATUS_USER_ERROR).json(err));
     })
     .catch(error => {
-      res.status(422).json(error);
+      res.status(STATUS_USER_ERROR).json(error);
     });
 });
 
@@ -34,14 +34,16 @@ server.get('/top-answer/:soID', (req, res) => {
   const { soID } = req.params;
 
   if (!Number.isInteger(+soID)) {
-    res.status(422).json({ error: 'soID given does not match pattern.' });
+    res
+      .status(STATUS_USER_ERROR)
+      .json({ error: 'soID given does not match pattern.' });
     return;
   }
 
   Post.findOne({ soID: req.params.soID }).then(post => {
     if (post === null) {
       res
-        .status(422)
+        .status(STATUS_USER_ERROR)
         .json({ error: `No post with id ${req.params.soID} was found.` });
       return;
     }
@@ -55,7 +57,9 @@ server.get('/top-answer/:soID', (req, res) => {
       .sort({ score: -1 })
       .then(post => {
         if (post === null) {
-          res.status(422).json({ error: `No post with top answer found.` });
+          res
+            .status(STATUS_USER_ERROR)
+            .json({ error: `No post with top answer found.` });
           return;
         }
 
@@ -68,14 +72,16 @@ server.get('/popular-jquery-questions', (req, res) => {
   Post.find({ tags: 'jquery' })
     .or([{ score: { $gt: 5000 } }, { 'user.reputation': { $gt: 200000 } }])
     .then(posts => res.json(posts))
-    .catch(err => res.status(422).json(err));
+    .catch(err => res.status(STATUS_USER_ERROR).json(err));
 });
 
 server.get('/npm-answers', (req, res) => {
   Post.find({ tags: 'npm' })
     .then(posts => {
       if (posts.length === 0) {
-        res.status(422).json({ error: 'No posts with npm found.' });
+        res
+          .status(STATUS_USER_ERROR)
+          .json({ error: 'No posts with npm found.' });
         return;
       }
 
@@ -87,9 +93,9 @@ server.get('/npm-answers', (req, res) => {
         .where('parentID')
         .in(answers)
         .then(answerPosts => res.status(200).json(answerPosts))
-        .catch(err => res.status(422).json(err));
+        .catch(err => res.status(STATUS_USER_ERROR).json(err));
     })
-    .catch(err => res.status(422).json(err));
+    .catch(err => res.status(STATUS_USER_ERROR).json(err));
 });
 
 module.exports = { server };
