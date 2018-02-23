@@ -73,41 +73,20 @@ server.get('/popular-jquery-questions', (req, res) => {
 
 server.get('/npm-answers', (req, res) => {
   Post.find({ tags: 'npm' })
-    // .select('acceptedAnswerID')
     .then(posts => {
       if (posts.length === 0) {
         res.status(422).json({ error: 'No posts with npm found.' });
         return;
       }
 
-      // res.status(200).send(posts);
-
-      console.log(posts);
-
       const answers = posts.map(postInfo => {
         return postInfo.soID;
       });
 
-      // res.json(answerIds);
-      console.log(answers);
-
-      // Post.find({ soID: answersIds })
-      // Post.find({ parentID: { $in: answers } })
       Post.find()
         .where('parentID')
         .in(answers)
-        // .or([{ parentID: answers }])
-        // .where('parentID')
-        // .in(answersIds)
-        .then(answerPosts => {
-          // if (answerPosts.length === 0) {
-          //   res.status(422).json({ error: 'Post has no answers' });
-          //   return;
-          // }
-          console.log(answerPosts);
-
-          res.status(200).json(answerPosts);
-        })
+        .then(answerPosts => res.status(200).json(answerPosts))
         .catch(err => res.status(422).json(err));
     })
     .catch(err => res.status(422).json(err));
