@@ -13,14 +13,6 @@ const server = express();
 server.use(bodyParser.json());
 
 // TODO: write your route handlers here
-
-server.get('/post/:soID', (req, res) => {
-  Post.find({ soID: req.params.soID })
-    // .sort({ acceptedAnswerID: 1 })
-    .then(posts => res.json(posts))
-    .catch(err => res.status(422).json(err));
-});
-
 server.get('/accepted-answer/:soID', (req, res) => {
   Post.findOne({ soID: req.params.soID })
     .then(post => {
@@ -53,6 +45,7 @@ server.get('/top-answer/:soID', (req, res) => {
         .json({ error: `No post with id ${req.params.soID} was found.` });
       return;
     }
+
     const answerId =
       post.acceptedAnswerID !== null ? post.acceptedAnswerID : -1;
 
@@ -73,14 +66,50 @@ server.get('/top-answer/:soID', (req, res) => {
 
 server.get('/popular-jquery-questions', (req, res) => {
   Post.find({ tags: 'jquery' })
-    // .or([{ user: { reputation: { $gt: 200000 } } }])
-    // .or([{ score: { $gt: 5000 } }, { user: { reputation: { $gt: 200000 } } }])
     .or([{ score: { $gt: 5000 } }, { 'user.reputation': { $gt: 200000 } }])
-    // .where('user.reputation')
-    // .gt(200000)
-    // .where('score')
-    // .gt(5000)
     .then(posts => res.json(posts))
+    .catch(err => res.status(422).json(err));
+});
+
+server.get('/npm-answers', (req, res) => {
+  Post.find({ tags: 'npm' })
+    // .select('acceptedAnswerID')
+    .then(posts => {
+      if (posts.length === 0) {
+        res.status(422).json({ error: 'No posts with npm found.' });
+        return;
+      }
+
+      // res.status(200).send(posts);
+
+      console.log(posts);
+
+      const answers = posts.map(postInfo => {
+        return postInfo.soID;
+      });
+
+      // res.json(answerIds);
+      console.log(answers);
+
+      // Post.find({ soID: answersIds })
+      // Post.find({ parentID: { $in: answers } })
+      Post.find()
+        .where('parentID')
+        .in(answers)
+        // .or([{ parentID: answers }])
+        // .where('parentID')
+        // .in(answersIds)
+        .then(answerPosts => {
+          // if (answerPosts.length === 0) {
+          //   res.status(422).json({ error: 'Post has no answers' });
+          //   return;
+          // }
+          console.log(answerPosts);
+
+          res.status(200).json(answerPosts);
+        })
+        .catch(err => res.status(422).json(err));
+    })
     .catch(err => res.status(422).json(err));
 });
 
