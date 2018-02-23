@@ -12,17 +12,17 @@ const PostSchema = new mongoose.Schema({
   soID: {
     type: Number,
     required: true,
+    index: true,
   },
   parentID: {
     type: Number,
+    index: true,
   },
   url: {
     type: String,
     required: true,
   },
-  title: {
-    type: String,
-  },
+  title: String,
   body: {
     type: String,
     required: true,
@@ -31,20 +31,12 @@ const PostSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  tags: [{ type: String }],
-  acceptedAnswerID: {
-    type: Number,
-  },
+  tags: [String],
+  acceptedAnswerID: Number,
   user: {
-    soUserID: {
-      type: Number,
-    },
-    name: {
-      type: String,
-    },
-    reputation: {
-      type: Number,
-    },
+    soUserID: Number,
+    name: String,
+    reputation: Number,
   },
 });
 

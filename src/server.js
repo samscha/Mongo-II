@@ -54,7 +54,7 @@ server.get('/top-answer/:soID', (req, res) => {
     Post.findOne({ parentID: req.params.soID })
       .where('soID')
       .ne(answerId)
-      .sort({ score: -1 })
+      .sort('-score')
       .then(post => {
         if (post === null) {
           res
@@ -70,6 +70,10 @@ server.get('/top-answer/:soID', (req, res) => {
 
 server.get('/popular-jquery-questions', (req, res) => {
   Post.find({ tags: 'jquery' })
+    // Post.find({
+    //   tags: 'jquery',
+    //   $or: [{ score: { $gt: 5000 } }, { 'user.reputation': { $gt: 200000 } }],
+    // })
     .or([{ score: { $gt: 5000 } }, { 'user.reputation': { $gt: 200000 } }])
     .then(posts => res.json(posts))
     .catch(err => res.status(STATUS_USER_ERROR).json(err));

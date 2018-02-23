@@ -26,4 +26,17 @@ const populatePosts = () => {
     .catch(err => console.log(err));
 };
 
+/* // to not use test
+  const mongoose = require('mongoose');
+
+  mongoose.connect('mongodb://localhost/so-posts')
+  .then(_ => {
+    Post.create(readPosts()).then(_ => {
+      mongoose.disconnect()
+    })
+    .catch(_ => {});
+  })
+  .catch(_ => {})
+*/
+
 module.exports = { readPosts, populatePosts };
