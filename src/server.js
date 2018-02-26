@@ -70,10 +70,7 @@ server.get('/top-answer/:soID', (req, res) => {
 
 server.get('/popular-jquery-questions', (req, res) => {
   Post.find({ tags: 'jquery' })
-    // Post.find({
-    //   tags: 'jquery',
-    //   $or: [{ score: { $gt: 5000 } }, { 'user.reputation': { $gt: 200000 } }],
-    // })
+    .where({ parentID: null })
     .or([{ score: { $gt: 5000 } }, { 'user.reputation': { $gt: 200000 } }])
     .then(posts => res.json(posts))
     .catch(err => res.status(STATUS_USER_ERROR).json(err));
